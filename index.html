@@ -3,491 +3,182 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FRQNCY - Live Sports Bet Bot</title>
+  <title>DAILY SIGNAL PRO - Daily Utility & VIP Pass</title>
   <style>
     :root {
-      --bg-color: #08080a;
-      --card-bg: #121319;
-      --border-color: rgba(255, 255, 255, 0.08);
-      --accent-color: #ffffff;
-      --text-muted: #8a8f9d;
-      --bot-green: #10b981;
-      --private-color: #ec4899;
+      --bg: #0b0f19;
+      --card: #151c2c;
+      --accent: #10b981;
+      --gold: #f59e0b;
+      --text: #ffffff;
+      --text-muted: #94a3b8;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
-      background-color: var(--bg-color);
+      background: var(--bg);
+      color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      color: #ffffff;
+      padding: 24px;
       display: flex;
-      flex-direction: column;
-      height: 100vh;
-      overflow: hidden;
-      transition: background-color 0.4s ease;
+      justify-content: center;
     }
 
-    body.private-active {
-      --bg-color: #05020a;
-      --card-bg: #0f0a17;
-      --border-color: rgba(236, 72, 153, 0.2);
-      --accent-color: #ec4899;
-    }
+    .container { max-width: 500px; width: 100%; }
 
-    .app-header {
-      height: 65px;
-      padding: 0 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid var(--border-color);
-      background: rgba(8, 8, 10, 0.9);
-    }
-
-    .brand-title { font-size: 0.95rem; font-weight: 700; letter-spacing: 2px; }
-
-    .app-main { flex: 1; display: grid; grid-template-columns: 220px 1fr; overflow: hidden; }
-
-    .sidebar {
-      border-right: 1px solid var(--border-color);
-      padding: 24px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .sidebar-item {
-      color: var(--text-muted);
-      padding: 10px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.88rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .sidebar-item:hover, .sidebar-item.active { background: rgba(255, 255, 255, 0.08); color: var(--accent-color); }
-    .sidebar-item.private-btn { color: var(--private-color); font-weight: 600; }
-
-    .content-area { padding: 32px; overflow-y: auto; }
-    .content-title { font-size: 1.3rem; margin-bottom: 24px; }
-
-    /* Live Bot Banner */
-    .bot-banner {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(18, 19, 25, 0.9));
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      border-radius: 16px;
-      padding: 20px;
+    header {
+      text-align: center;
       margin-bottom: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
     }
 
-    .bot-status-box { display: flex; align-items: center; gap: 16px; }
-
-    .bot-pulse {
-      width: 16px; height: 16px; border-radius: 50%;
-      background: var(--bot-green);
-      box-shadow: 0 0 10px var(--bot-green);
-      animation: blink 1.2s infinite alternate;
+    .badge {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--accent);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
     }
 
-    @keyframes blink {
-      0% { opacity: 0.3; transform: scale(0.8); }
-      100% { opacity: 1; transform: scale(1.1); }
-    }
-
-    .bot-controls { display: flex; gap: 10px; }
-
-    .action-btn {
-      background: #10b981; color: white; border: none; padding: 10px 18px;
-      border-radius: 20px; font-weight: 600; cursor: pointer; transition: opacity 0.2s;
-    }
-
-    .action-btn:hover { opacity: 0.9; }
-
-    .toggle-btn {
-      background: rgba(255, 255, 255, 0.1); color: #fff; border: 1px solid var(--border-color);
-      padding: 10px 18px; border-radius: 20px; font-weight: 600; cursor: pointer;
-    }
-
-    /* Live Feed List */
-    .live-feed {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 28px;
-    }
-
-    .feed-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-left: 4px solid var(--bot-green);
-      border-radius: 10px;
-      padding: 14px 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .league-badge {
-      font-size: 0.72rem;
-      background: rgba(255, 255, 255, 0.08);
-      padding: 3px 8px;
-      border-radius: 4px;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-      display: inline-block;
-    }
-
-    .match-teams { font-weight: 600; font-size: 0.95rem; }
-    .match-time { color: var(--bot-green); font-size: 0.8rem; font-weight: bold; }
-
-    .bet-recommendation { text-align: right; }
-    .pick-title { font-weight: 700; color: #10b981; font-size: 0.9rem; }
-    .pick-odds { font-size: 0.8rem; color: var(--text-muted); }
-
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-      gap: 24px;
-    }
+    h1 { margin-top: 8px; font-size: 1.6rem; }
 
     .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 14px;
-      padding: 16px;
-      display: flex; flex-direction: column; gap: 12px;
-      cursor: pointer; transition: all 0.2s;
+      padding: 20px;
+      margin-bottom: 16px;
     }
 
-    .card:hover, .card.playing { border-color: var(--accent-color); }
+    .card-title { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px; }
+    .card-value { font-size: 1.2rem; font-weight: bold; }
 
-    .card-cover {
-      width: 100%; aspect-ratio: 1; border-radius: 10px;
-      background-size: cover; background-position: center;
+    /* Locked VIP Card Styling */
+    .card.locked {
+      position: relative;
+      border: 1px solid var(--gold);
+      overflow: hidden;
     }
 
-    .modal-overlay {
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px);
-      display: none; align-items: center; justify-content: center;
-      z-index: 100;
+    .blur-content {
+      filter: blur(6px);
+      user-select: none;
     }
 
-    .modal-overlay.open { display: flex; }
-
-    .lock-box {
-      background: #13111c; border: 1px solid var(--private-color);
-      padding: 32px; border-radius: 20px; text-align: center;
-      width: 320px; display: flex; flex-direction: column; gap: 16px;
+    .lock-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(21, 28, 44, 0.85);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
     }
 
-    .lock-box input {
-      background: #000000; border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #fff; padding: 12px; border-radius: 10px; text-align: center;
-      font-size: 1.2rem; letter-spacing: 4px; outline: none;
+    .pay-btn {
+      background: linear-gradient(135deg, var(--gold), #d97706);
+      color: #000;
+      font-weight: 700;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: transform 0.2s;
     }
 
-    .lock-box button {
-      background: var(--private-color); color: white; border: none;
-      padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer;
+    .pay-btn:hover { transform: scale(1.03); }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.8);
+      align-items: center;
+      justify-content: center;
     }
-
-    .app-footer {
-      height: 85px; background: #111217;
-      border-top: 1px solid var(--border-color);
-      padding: 0 28px; display: grid;
-      grid-template-columns: 250px 1fr 250px; align-items: center;
+    .modal.active { display: flex; }
+    .modal-box {
+      background: var(--card);
+      padding: 30px;
+      border-radius: 16px;
+      text-align: center;
+      max-width: 360px;
+      width: 90%;
     }
-
-    .track-info { display: flex; align-items: center; gap: 12px; }
-    .track-thumb { width: 44px; height: 44px; border-radius: 8px; background-size: cover; background-color: #222; }
-
-    .player-center { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-
-    .play-btn {
-      width: 44px; height: 44px; border-radius: 50%;
-      background: #ffffff; border: none; color: #000; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-    }
-
-    #visualizer { width: 100%; height: 28px; }
-    .status-text { font-size: 0.8rem; color: var(--text-muted); text-align: right; }
   </style>
 </head>
 <body>
 
-  <header class="app-header">
-    <span class="brand-title" id="headerTitle">FRQNCY BOT</span>
-  </header>
+  <div class="container">
+    <header>
+      <span class="badge">● LIVE DAILY UPDATES</span>
+      <h1>Daily Signal Hub</h1>
+    </header>
 
-  <main class="app-main">
-    <aside class="sidebar">
-      <div class="sidebar-item active" id="btnHome">🏠 Dashboard</div>
-      <div class="sidebar-item" id="btnScan">⚡ Force Scan</div>
-      <div class="sidebar-item private-btn" id="btnPrivate">🔒 Private Space</div>
-    </aside>
+    <!-- FREE DAILY CONTENT (Keeps users coming back daily) -->
+    <div class="card">
+      <div class="card-title">FREE DAILY PICK (Updated Today)</div>
+      <div class="card-value" id="freePick">⚽ Arsenal vs Chelsea — Over 2.5 Goals</div>
+    </div>
 
-    <section class="content-area">
-      <!-- Bot Control Banner -->
-      <div class="bot-banner">
-        <div class="bot-status-box">
-          <div class="bot-pulse" id="botPulse"></div>
-          <div>
-            <h3 style="font-size: 1rem;">Live Premier League & La Liga Bot</h3>
-            <p style="font-size: 0.82rem; color: var(--text-muted);" id="botStatus">Bot Status: ACTIVE (Scanning Live Odds...)</p>
-          </div>
-        </div>
-        <div class="bot-controls">
-          <button class="action-btn" id="scanNowBtn">🔄 Scan Now</button>
-          <button class="toggle-btn" id="autoBotBtn">Auto Bot: ON</button>
-        </div>
+    <!-- VIP PAID CONTENT (Monetization Gate) -->
+    <div class="card locked" id="vipCard">
+      <div class="blur-content">
+        <div class="card-title">VIP HIGH-CONFIDENCE PICK (92% Win Rate)</div>
+        <div class="card-value">🔒 Real Madrid vs Barcelona — Pick Hidden</div>
       </div>
-
-      <!-- Live Matches List -->
-      <h2 class="content-title">Live Match Bot Signals</h2>
-      <div class="live-feed" id="liveFeedContainer"></div>
-
-      <h2 class="content-title" id="gridTitle">Audio Channels</h2>
-      <div class="dashboard-grid" id="channelGrid"></div>
-    </section>
-  </main>
-
-  <div class="modal-overlay" id="pinModal">
-    <div class="lock-box">
-      <h3 style="color: var(--private-color);">🔒 Enter Security PIN</h3>
-      <p style="font-size: 0.8rem; color: var(--text-muted);">Default PIN is <strong>1234</strong></p>
-      <input type="password" id="pinInput" maxlength="4" placeholder="••••" />
-      <button id="unlockBtn">Unlock Private Space</button>
+      
+      <div class="lock-overlay" id="lockOverlay">
+        <p style="font-size: 0.9rem; font-weight: 600;">🔒 Unlock Today's VIP Signal</p>
+        <button class="pay-btn" id="unlockBtn">Unlock for $4.99</button>
+      </div>
     </div>
   </div>
 
-  <footer class="app-footer">
-    <div class="track-info">
-      <div class="track-thumb" id="currentThumb"></div>
-      <div>
-        <h4 id="currentTitle" style="font-size: 0.88rem;">Select a channel</h4>
-        <p id="currentSub" style="font-size: 0.78rem; color: var(--text-muted);">Click to play sound</p>
-      </div>
+  <!-- PAYMENT CHECKOUT MODAL -->
+  <div class="modal" id="payModal">
+    <div class="modal-box">
+      <h2>Unlock VIP Access</h2>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin: 12px 0 20px;">
+        Get instant access to high-confidence signals and premium predictions.
+      </p>
+      <!-- Integrate your Stripe / Paypal link here -->
+      <button class="pay-btn" style="width: 100%;" id="confirmPayBtn">Pay $4.99 via Card</button>
+      <button style="background: transparent; border: none; color: var(--text-muted); margin-top: 12px; cursor: pointer;" id="closeModal">Cancel</button>
     </div>
-
-    <div class="player-center">
-      <button class="play-btn" id="togglePlay"></button>
-      <canvas id="visualizer"></canvas>
-    </div>
-
-    <div class="status-text" id="statusText">STOPPED</div>
-  </footer>
+  </div>
 
   <script>
-    // Live Match Database for Bot
-    const liveMatchDatabase = [
-      { league: "PREMIER LEAGUE", home: "Arsenal", away: "Chelsea", score: "1 - 1", time: "64'", pick: "Over 2.5 Goals", odds: "1.75", confidence: "86%" },
-      { league: "PREMIER LEAGUE", home: "Manchester City", away: "Liverpool", score: "2 - 1", time: "78'", pick: "Both Teams To Score", odds: "1.60", confidence: "91%" },
-      { league: "LA LIGA", home: "Real Madrid", away: "Sevilla", score: "0 - 0", time: "32'", pick: "Real Madrid -1.5 AH", odds: "1.88", confidence: "79%" },
-      { league: "LA LIGA", home: "Barcelona", away: "Real Betis", score: "2 - 0", time: "55'", pick: "Barcelona Win & Over 2.5", odds: "1.65", confidence: "88%" },
-      { league: "SERIE A", home: "Inter Milan", away: "Juventus", score: "1 - 0", time: "41'", pick: "Inter Milan Moneyline", odds: "1.70", confidence: "82%" },
-      { league: "PREMIER LEAGUE", home: "Newcastle", away: "Tottenham", score: "2 - 2", time: "83'", pick: "Over 4.5 Asian Total", odds: "2.10", confidence: "74%" }
-    ];
-
-    const publicChannels = [
-      { id: 1, title: "Matchday Energy", subtitle: "528 Hz Focus Mode", freq: 528, cover: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=80" },
-      { id: 2, title: "Analytics Ambient", subtitle: "432 Hz Calibration", freq: 432, cover: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&q=80" },
-      { id: 3, title: "Synth Waveform", subtitle: "220 Hz Concentration", freq: 220, cover: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=400&q=80" }
-    ];
-
-    const privateChannels = [
-      { id: 101, title: "VIP High-Odds Stream", subtitle: "639 Hz High Odds", freq: 639, cover: "https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?w=400&q=80" },
-      { id: 102, title: "Awakening Intuition", subtitle: "741 Hz Instinct Boost", freq: 741, cover: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400&q=80" }
-    ];
-
-    let audioCtx = null;
-    let oscillator = null;
-    let gainNode = null;
-    let isPlaying = false;
-    let isPrivateMode = false;
-    let autoBotActive = true;
-    let botTimer = null;
-
-    const liveFeedContainer = document.getElementById('liveFeedContainer');
-    const scanNowBtn = document.getElementById('scanNowBtn');
-    const autoBotBtn = document.getElementById('autoBotBtn');
-    const botStatus = document.getElementById('botStatus');
-
-    function renderBotLivePicks() {
-      // Shuffle array to simulate live scanning changes
-      const shuffled = [...liveMatchDatabase].sort(() => 0.5 - Math.random());
-      const selected = shuffled.slice(0, 3); // Pick top 3 live signals
-
-      liveFeedContainer.innerHTML = '';
-      selected.forEach(item => {
-        const card = document.createElement('div');
-        card.className = 'feed-card';
-        card.innerHTML = `
-          <div>
-            <span class="league-badge">${item.league}</span>
-            <div class="match-teams">${item.home} ${item.score} ${item.away}</div>
-            <div class="match-time">● LIVE ${item.time}</div>
-          </div>
-          <div class="bet-recommendation">
-            <div class="pick-title">🤖 BOT PICK: ${item.pick}</div>
-            <div class="pick-odds">Odds: ${item.odds} | Confidence: ${item.confidence}</div>
-          </div>
-        `;
-        liveFeedContainer.appendChild(card);
-      });
-
-      botStatus.textContent = `Bot Status: UPDATED (${new Date().toLocaleTimeString()})`;
-    }
-
-    renderBotLivePicks();
-
-    // Auto Refresh bot signal every 8 seconds
-    botTimer = setInterval(() => {
-      if (autoBotActive) renderBotLivePicks();
-    }, 8000);
-
-    scanNowBtn.addEventListener('click', () => {
-      renderBotLivePicks();
-    });
-
-    autoBotBtn.addEventListener('click', () => {
-      autoBotActive = !autoBotActive;
-      if (autoBotActive) {
-        autoBotBtn.textContent = "Auto Bot: ON";
-        autoBotBtn.style.background = "rgba(255, 255, 255, 0.1)";
-      } else {
-        autoBotBtn.textContent = "Auto Bot: OFF";
-        autoBotBtn.style.background = "#ef4444";
-      }
-    });
-
-    /* Audio Player Logic */
-    const grid = document.getElementById('channelGrid');
-    const playBtn = document.getElementById('togglePlay');
-    const playIcon = `<svg width="14" height="16" viewBox="0 0 14 16" fill="currentColor"><path d="M0 0L14 8L0 16V0Z"/></svg>`;
-    const pauseIcon = `<svg width="12" height="16" viewBox="0 0 12 16" fill="currentColor"><rect width="4" height="16" rx="1"/><rect x="8" width="4" height="16" rx="1"/></svg>`;
-    playBtn.innerHTML = playIcon;
-
-    function renderChannels(list) {
-      grid.innerHTML = '';
-      list.forEach(ch => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.id = `card-${ch.id}`;
-        card.innerHTML = `
-          <div class="card-cover" style="background-image: url('${ch.cover}')"></div>
-          <div class="card-title">${ch.title}</div>
-          <div class="card-subtitle">${ch.subtitle}</div>
-        `;
-        card.addEventListener('click', () => startFrequency(ch));
-        grid.appendChild(card);
-      });
-    }
-
-    renderChannels(publicChannels);
-
-    function initAudio() {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-    }
-
-    function startFrequency(ch) {
-      initAudio();
-      stopFrequency();
-
-      document.querySelectorAll('.card').forEach(c => c.classList.remove('playing'));
-      const activeCard = document.getElementById(`card-${ch.id}`);
-      if (activeCard) activeCard.classList.add('playing');
-
-      document.getElementById('currentTitle').textContent = ch.title;
-      document.getElementById('currentSub').textContent = ch.subtitle;
-      document.getElementById('currentThumb').style.backgroundImage = `url('${ch.cover}')`;
-
-      oscillator = audioCtx.createOscillator();
-      gainNode = audioCtx.createGain();
-
-      oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(ch.freq, audioCtx.currentTime);
-      gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-
-      oscillator.connect(gainNode);
-      gainNode.connect(audioCtx.destination);
-
-      oscillator.start();
-      isPlaying = true;
-      playBtn.innerHTML = pauseIcon;
-      document.getElementById('statusText').textContent = `PLAYING ${ch.freq}Hz`;
-    }
-
-    function stopFrequency() {
-      if (oscillator) {
-        oscillator.stop();
-        oscillator.disconnect();
-        oscillator = null;
-      }
-      isPlaying = false;
-      playBtn.innerHTML = playIcon;
-      document.getElementById('statusText').textContent = "STOPPED";
-    }
-
-    playBtn.addEventListener('click', () => {
-      if (isPlaying) {
-        stopFrequency();
-      } else {
-        startFrequency(publicChannels[0]);
-      }
-    });
-
-    /* Private Space Logic */
-    const pinModal = document.getElementById('pinModal');
-    const pinInput = document.getElementById('pinInput');
     const unlockBtn = document.getElementById('unlockBtn');
-    const btnPrivate = document.getElementById('btnPrivate');
-
-    btnPrivate.addEventListener('click', () => {
-      if (!isPrivateMode) pinModal.classList.add('open');
-    });
+    const payModal = document.getElementById('payModal');
+    const closeModal = document.getElementById('closeModal');
+    const confirmPayBtn = document.getElementById('confirmPayBtn');
+    const vipCard = document.getElementById('vipCard');
 
     unlockBtn.addEventListener('click', () => {
-      if (pinInput.value === '1234') {
-        isPrivateMode = true;
-        document.body.classList.add('private-active');
-        document.getElementById('headerTitle').textContent = "FRQNCY (Private Mode)";
-        renderChannels(privateChannels);
-        pinModal.classList.remove('open');
-      } else {
-        alert("Incorrect PIN. Default is 1234.");
-      }
+      payModal.classList.add('active');
     });
 
-    /* Animated Visualizer */
-    const canvas = document.getElementById('visualizer');
-    const ctx = canvas.getContext('2d');
+    closeModal.addEventListener('click', () => {
+      payModal.classList.remove('active');
+    });
 
-    function drawVisualizer() {
-      canvas.width = canvas.clientWidth;
-      canvas.height = canvas.clientHeight;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      const bars = 25;
-      const barWidth = canvas.width / bars - 2;
-
-      for (let i = 0; i < bars; i++) {
-        const height = isPlaying ? Math.random() * (canvas.height - 4) + 4 : 2;
-        ctx.fillStyle = isPlaying ? (isPrivateMode ? '#ec4899' : '#10b981') : 'rgba(255, 255, 255, 0.2)';
-        ctx.fillRect(i * (barWidth + 2), canvas.height - height, barWidth, height);
-      }
-
-      requestAnimationFrame(drawVisualizer);
-    }
-
-    drawVisualizer();
+    // Simulate Payment Unlock
+    confirmPayBtn.addEventListener('click', () => {
+      alert("Payment Successful! VIP unlocked.");
+      payModal.classList.remove('active');
+      
+      // Reveal VIP Content
+      vipCard.classList.remove('locked');
+      vipCard.innerHTML = `
+        <div class="card-title" style="color: var(--gold)">🔥 VIP UNLOCKED SIGNAL</div>
+        <div class="card-value">🔥 Real Madrid Asian Handicap -1.5 (Odds: 2.10)</div>
+      `;
+    });
   </script>
+
 </body>
 </html>

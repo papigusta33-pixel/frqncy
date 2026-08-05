@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FRQNCY - Web App</title>
+  <style>
+    :root {
+      --bg-color: #0b0c10;
+      --card-bg: #14161d;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --accent-color: #ffffff;
+      --text-muted: #8a8f9d;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Header Navigation */
+    .app-header {
+      height: 70px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+      background: #0b0c10;
+    }
+
+    .dropdown-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 6px 14px 6px 6px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+    }
+
+    .logo-img {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+    }
+
+    .brand-title {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+    }
+
+    .arrow-icon {
+      width: 0;
+      height: 0;
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 5px solid var(--accent-color);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .nav-links a.active {
+      color: var(--accent-color);
+    }
+
+    /* Main Layout */
+    .app-main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 240px 1fr;
+    }
+
+    .sidebar {
+      border-right: 1px solid var(--border-color);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .sidebar-item {
+      color: var(--text-muted);
+      padding: 10px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .sidebar-item.active {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--accent-color);
+    }
+
+    .content-area {
+      padding: 32px;
+    }
+
+    .content-title {
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .card-cover {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #2c2d30, #111215);
+    }
+
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .card-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Footer Controls */
+    .app-footer {
+      height: 80px;
+      background: var(--card-bg);
+      border-top: 1px solid var(--border-color);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .play-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: none;
+      color: #000;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .play-btn svg {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <div style="display: flex; flex-direction: column; min-height: 100vh; width: 100%;">
+    <header class="app-header">
+      <div class="dropdown-btn">
+        <svg class="logo-img" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="40" height="40" rx="8" fill="#000000"/>
+          <circle cx="16" cy="20" r="8" stroke="#FFFFFF" stroke-width="1" stroke-dasharray="2 2" opacity="0.8"/>
+          <circle cx="24" cy="20" r="8" stroke="#FFFFFF" stroke-width="1" stroke-dasharray="2 2" opacity="0.8"/>
+        </svg>
+        <span class="brand-title">FRQNCY</span>
+        <span class="arrow-icon"></span>
+      </div>
+
+      <ul class="nav-links">
+        <li><a href="#" class="active">Discover</a></li>
+        <li><a href="#">Frequencies</a></li>
+        <li><a href="#">Mixes</a></li>
+        <li><a href="#">Library</a></li>
+      </ul>
+    </header>
+
+    <main class="app-main">
+      <aside class="sidebar">
+        <div class="sidebar-item active">Home</div>
+        <div class="sidebar-item">Recent Tracks</div>
+        <div class="sidebar-item">Favorites</div>
+        <div class="sidebar-item">Playlists</div>
+        <div class="sidebar-item">Settings</div>
+      </aside>
+
+      <section class="content-area">
+        <h2 class="content-title">Trending Channels</h2>
+        <div class="dashboard-grid">
+          <div class="card">
+            <div class="card-cover"></div>
+            <div class="card-title">Deep Frequencies</div>
+            <div class="card-subtitle">Ambient & Chill</div>
+          </div>
+          <div class="card">
+            <div class="card-cover"></div>
+            <div class="card-title">Resonance 432Hz</div>
+            <div class="card-subtitle">Meditation Signals</div>
+          </div>
+          <div class="card">
+            <div class="card-cover"></div>
+            <div class="card-title">Synth Waveform</div>
+            <div class="card-subtitle">Electronic</div>
+          </div>
+          <div class="card">
+            <div class="card-cover"></div>
+            <div class="card-title">Low-Fi Oscillations</div>
+            <div class="card-subtitle">Focus Beats</div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <div style="font-size: 0.85rem; color: var(--text-muted);">No signal selected</div>
+      <button class="play-btn" id="togglePlay"></button>
+      <div style="font-size: 0.85rem; color: var(--text-muted);">00:00 / 00:00</div>
+    </footer>
+  </div>
+
+  <script>
+    (function() {
+      const playBtn = document.getElementById('togglePlay');
+      let isPlaying = false;
+
+      const playIcon = `<svg width="14" height="16" viewBox="0 0 14 16" fill="currentColor"><path d="M0 0L14 8L0 16V0Z"/></svg>`;
+      const pauseIcon = `<svg width="12" height="16" viewBox="0 0 12 16" fill="currentColor"><rect width="4" height="16" rx="1"/><rect x="8" width="4" height="16" rx="1"/></svg>`;
+
+      if (playBtn) {
+        playBtn.innerHTML = playIcon;
+        playBtn.addEventListener('click', function() {
+          isPlaying = !isPlaying;
+          playBtn.innerHTML = isPlaying ? pauseIcon : playIcon;
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

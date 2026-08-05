@@ -6,8 +6,8 @@
   <title>FRQNCY - Web App</title>
   <style>
     :root {
-      --bg-color: #0b0c10;
-      --card-bg: #14161d;
+      --bg-color: #08080a;
+      --card-bg: #121319;
       --border-color: rgba(255, 255, 255, 0.08);
       --accent-color: #ffffff;
       --text-muted: #8a8f9d;
@@ -25,18 +25,21 @@
       color: #ffffff;
       display: flex;
       flex-direction: column;
-      min-height: 100vh;
+      height: 100vh;
+      overflow: hidden;
     }
 
     /* Header Navigation */
     .app-header {
-      height: 70px;
+      height: 65px;
       padding: 0 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       border-bottom: 1px solid var(--border-color);
-      background: #0b0c10;
+      background: rgba(8, 8, 10, 0.9);
+      backdrop-filter: blur(10px);
+      z-index: 10;
     }
 
     .dropdown-btn {
@@ -45,19 +48,24 @@
       gap: 12px;
       padding: 6px 14px 6px 6px;
       border-radius: 12px;
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.04);
       border: 1px solid var(--border-color);
       cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .dropdown-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
     }
 
     .logo-img {
-      width: 36px;
-      height: 36px;
+      width: 32px;
+      height: 32px;
       border-radius: 8px;
     }
 
     .brand-title {
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 700;
       letter-spacing: 2px;
     }
@@ -72,18 +80,19 @@
 
     .nav-links {
       display: flex;
-      gap: 20px;
+      gap: 24px;
       list-style: none;
     }
 
     .nav-links a {
       color: var(--text-muted);
       text-decoration: none;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       font-weight: 500;
+      transition: color 0.2s;
     }
 
-    .nav-links a.active {
+    .nav-links a:hover, .nav-links a.active {
       color: var(--accent-color);
     }
 
@@ -91,61 +100,82 @@
     .app-main {
       flex: 1;
       display: grid;
-      grid-template-columns: 240px 1fr;
+      grid-template-columns: 220px 1fr;
+      overflow: hidden;
     }
 
     .sidebar {
       border-right: 1px solid var(--border-color);
-      padding: 24px;
+      padding: 24px 16px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.2);
     }
 
     .sidebar-item {
       color: var(--text-muted);
-      padding: 10px 14px;
+      padding: 10px 16px;
       border-radius: 8px;
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: all 0.2s;
     }
 
-    .sidebar-item.active {
+    .sidebar-item:hover, .sidebar-item.active {
       background: rgba(255, 255, 255, 0.08);
       color: var(--accent-color);
     }
 
     .content-area {
       padding: 32px;
+      overflow-y: auto;
     }
 
     .content-title {
-      font-size: 1.4rem;
-      margin-bottom: 20px;
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+      letter-spacing: -0.5px;
     }
 
     .dashboard-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 24px;
     }
 
     .card {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 16px;
       display: flex;
       flex-direction: column;
       gap: 12px;
       cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.5);
+    }
+
+    .card.playing {
+      border-color: #ffffff;
     }
 
     .card-cover {
       width: 100%;
       aspect-ratio: 1;
-      border-radius: 8px;
-      background: linear-gradient(135deg, #2c2d30, #111215);
+      border-radius: 10px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      overflow: hidden;
     }
 
     .card-title {
@@ -158,15 +188,48 @@
       color: var(--text-muted);
     }
 
-    /* Footer Controls */
+    /* Footer / Player Controls */
     .app-footer {
-      height: 80px;
-      background: var(--card-bg);
+      height: 85px;
+      background: #111217;
       border-top: 1px solid var(--border-color);
-      padding: 0 24px;
+      padding: 0 28px;
+      display: grid;
+      grid-template-columns: 250px 1fr 250px;
+      align-items: center;
+    }
+
+    .track-info {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .track-thumb {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      background-size: cover;
+      background-position: center;
+      background-color: var(--card-bg);
+    }
+
+    .track-details h4 {
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    .track-details p {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .player-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
     }
 
     .play-btn {
@@ -180,94 +243,212 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      transition: transform 0.15s ease, background 0.2s;
     }
 
-    .play-btn svg {
-      display: block;
+    .play-btn:hover {
+      transform: scale(1.05);
+      background: #f0f0f0;
+    }
+
+    /* Visualizer Canvas */
+    #visualizer {
+      width: 100%;
+      height: 28px;
+    }
+
+    .time-display {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-align: right;
     }
   </style>
 </head>
 <body>
 
-  <div style="display: flex; flex-direction: column; min-height: 100vh; width: 100%;">
-    <header class="app-header">
-      <div class="dropdown-btn">
-        <svg class="logo-img" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="40" height="40" rx="8" fill="#000000"/>
-          <circle cx="16" cy="20" r="8" stroke="#FFFFFF" stroke-width="1" stroke-dasharray="2 2" opacity="0.8"/>
-          <circle cx="24" cy="20" r="8" stroke="#FFFFFF" stroke-width="1" stroke-dasharray="2 2" opacity="0.8"/>
-        </svg>
-        <span class="brand-title">FRQNCY</span>
-        <span class="arrow-icon"></span>
+  <header class="app-header">
+    <div class="dropdown-btn">
+      <svg class="logo-img" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="40" height="40" rx="8" fill="#000000"/>
+        <circle cx="16" cy="20" r="8" stroke="#FFFFFF" stroke-width="1.2" stroke-dasharray="2 2" opacity="0.8"/>
+        <circle cx="24" cy="20" r="8" stroke="#FFFFFF" stroke-width="1.2" stroke-dasharray="2 2" opacity="0.8"/>
+      </svg>
+      <span class="brand-title">FRQNCY</span>
+      <span class="arrow-icon"></span>
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="#" class="active">Discover</a></li>
+      <li><a href="#">Frequencies</a></li>
+      <li><a href="#">Mixes</a></li>
+      <li><a href="#">Library</a></li>
+    </ul>
+  </header>
+
+  <main class="app-main">
+    <aside class="sidebar">
+      <div class="sidebar-item active">Home</div>
+      <div class="sidebar-item">Recent Tracks</div>
+      <div class="sidebar-item">Favorites</div>
+      <div class="sidebar-item">Playlists</div>
+      <div class="sidebar-item">Settings</div>
+    </aside>
+
+    <section class="content-area">
+      <h2 class="content-title">Trending Channels</h2>
+      <div class="dashboard-grid" id="channelGrid"></div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <div class="track-info">
+      <div class="track-thumb" id="currentThumb"></div>
+      <div class="track-details">
+        <h4 id="currentTitle">Select a channel</h4>
+        <p id="currentSub">Click any card to play</p>
       </div>
+    </div>
 
-      <ul class="nav-links">
-        <li><a href="#" class="active">Discover</a></li>
-        <li><a href="#">Frequencies</a></li>
-        <li><a href="#">Mixes</a></li>
-        <li><a href="#">Library</a></li>
-      </ul>
-    </header>
-
-    <main class="app-main">
-      <aside class="sidebar">
-        <div class="sidebar-item active">Home</div>
-        <div class="sidebar-item">Recent Tracks</div>
-        <div class="sidebar-item">Favorites</div>
-        <div class="sidebar-item">Playlists</div>
-        <div class="sidebar-item">Settings</div>
-      </aside>
-
-      <section class="content-area">
-        <h2 class="content-title">Trending Channels</h2>
-        <div class="dashboard-grid">
-          <div class="card">
-            <div class="card-cover"></div>
-            <div class="card-title">Deep Frequencies</div>
-            <div class="card-subtitle">Ambient & Chill</div>
-          </div>
-          <div class="card">
-            <div class="card-cover"></div>
-            <div class="card-title">Resonance 432Hz</div>
-            <div class="card-subtitle">Meditation Signals</div>
-          </div>
-          <div class="card">
-            <div class="card-cover"></div>
-            <div class="card-title">Synth Waveform</div>
-            <div class="card-subtitle">Electronic</div>
-          </div>
-          <div class="card">
-            <div class="card-cover"></div>
-            <div class="card-title">Low-Fi Oscillations</div>
-            <div class="card-subtitle">Focus Beats</div>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <footer class="app-footer">
-      <div style="font-size: 0.85rem; color: var(--text-muted);">No signal selected</div>
+    <div class="player-center">
       <button class="play-btn" id="togglePlay"></button>
-      <div style="font-size: 0.85rem; color: var(--text-muted);">00:00 / 00:00</div>
-    </footer>
-  </div>
+      <canvas id="visualizer"></canvas>
+    </div>
+
+    <div class="time-display" id="timeDisplay">00:00 / 00:00</div>
+  </footer>
+
+  <!-- Hidden HTML5 Audio Element -->
+  <audio id="audioPlayer" crossorigin="anonymous"></audio>
 
   <script>
-    (function() {
-      const playBtn = document.getElementById('togglePlay');
-      let isPlaying = false;
-
-      const playIcon = `<svg width="14" height="16" viewBox="0 0 14 16" fill="currentColor"><path d="M0 0L14 8L0 16V0Z"/></svg>`;
-      const pauseIcon = `<svg width="12" height="16" viewBox="0 0 12 16" fill="currentColor"><rect width="4" height="16" rx="1"/><rect x="8" width="4" height="16" rx="1"/></svg>`;
-
-      if (playBtn) {
-        playBtn.innerHTML = playIcon;
-        playBtn.addEventListener('click', function() {
-          isPlaying = !isPlaying;
-          playBtn.innerHTML = isPlaying ? pauseIcon : playIcon;
-        });
+    // Channel Data with live public ambient audio streams & artwork
+    const channels = [
+      {
+        id: 1,
+        title: "Deep Frequencies",
+        subtitle: "Ambient & Chill",
+        cover: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500&q=80",
+        stream: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3"
+      },
+      {
+        id: 2,
+        title: "Resonance 432Hz",
+        subtitle: "Meditation Signals",
+        cover: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&q=80",
+        stream: "https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=ambient-piano-amp-strings-10711.mp3"
+      },
+      {
+        id: 3,
+        title: "Synth Waveform",
+        subtitle: "Electronic Oscillations",
+        cover: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=500&q=80",
+        stream: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=synthwave-80s-110045.mp3"
+      },
+      {
+        id: 4,
+        title: "Low-Fi Oscillations",
+        subtitle: "Focus Beats",
+        cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=500&q=80",
+        stream: "https://cdn.pixabay.com/download/audio/2022/11/06/audio_c1e34e56eb.mp3?filename=chill-lofi-song-8444.mp3"
       }
-    })();
+    ];
+
+    const grid = document.getElementById('channelGrid');
+    const audio = document.getElementById('audioPlayer');
+    const playBtn = document.getElementById('togglePlay');
+    const currentTitle = document.getElementById('currentTitle');
+    const currentSub = document.getElementById('currentSub');
+    const currentThumb = document.getElementById('currentThumb');
+    const timeDisplay = document.getElementById('timeDisplay');
+    const canvas = document.getElementById('visualizer');
+    const ctx = canvas.getContext('2d');
+
+    let currentTrack = null;
+    let isPlaying = false;
+
+    const playIcon = `<svg width="14" height="16" viewBox="0 0 14 16" fill="currentColor"><path d="M0 0L14 8L0 16V0Z"/></svg>`;
+    const pauseIcon = `<svg width="12" height="16" viewBox="0 0 12 16" fill="currentColor"><rect width="4" height="16" rx="1"/><rect x="8" width="4" height="16" rx="1"/></svg>`;
+
+    playBtn.innerHTML = playIcon;
+
+    // Render Cards dynamically
+    channels.forEach(ch => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.id = `card-${ch.id}`;
+      card.innerHTML = `
+        <div class="card-cover" style="background-image: url('${ch.cover}')"></div>
+        <div class="card-title">${ch.title}</div>
+        <div class="card-subtitle">${ch.subtitle}</div>
+      `;
+      card.addEventListener('click', () => selectAndPlay(ch));
+      grid.appendChild(card);
+    });
+
+    function selectAndPlay(ch) {
+      document.querySelectorAll('.card').forEach(c => c.classList.remove('playing'));
+      document.getElementById(`card-${ch.id}`).classList.add('playing');
+
+      currentTrack = ch;
+      currentTitle.textContent = ch.title;
+      currentSub.textContent = ch.subtitle;
+      currentThumb.style.backgroundImage = `url('${ch.cover}')`;
+
+      audio.src = ch.stream;
+      audio.play();
+      isPlaying = true;
+      playBtn.innerHTML = pauseIcon;
+    }
+
+    playBtn.addEventListener('click', () => {
+      if (!currentTrack) {
+        selectAndPlay(channels[0]);
+        return;
+      }
+
+      if (isPlaying) {
+        audio.pause();
+        isPlaying = false;
+        playBtn.innerHTML = playIcon;
+      } else {
+        audio.play();
+        isPlaying = true;
+        playBtn.innerHTML = pauseIcon;
+      }
+    });
+
+    // Time Formatting
+    audio.addEventListener('timeupdate', () => {
+      if (isNaN(audio.duration)) return;
+      const curM = Math.floor(audio.currentTime / 60).toString().padStart(2, '0');
+      const curS = Math.floor(audio.currentTime % 60).toString().padStart(2, '0');
+      const durM = Math.floor(audio.duration / 60).toString().padStart(2, '0');
+      const durS = Math.floor(audio.duration % 60).toString().padStart(2, '0');
+      timeDisplay.textContent = `${curM}:${curS} / ${durM}:${durS}`;
+    });
+
+    // Simulated Visualizer Animation
+    function drawVisualizer() {
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const bars = 30;
+      const barWidth = canvas.width / bars - 2;
+
+      for (let i = 0; i < bars; i++) {
+        const height = isPlaying 
+          ? Math.random() * (canvas.height - 4) + 4 
+          : 2;
+        
+        ctx.fillStyle = isPlaying ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.15)';
+        ctx.fillRect(i * (barWidth + 2), canvas.height - height, barWidth, height);
+      }
+
+      requestAnimationFrame(drawVisualizer);
+    }
+
+    drawVisualizer();
   </script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FRQNCY - AI Sound Companion</title>
+  <title>FRQNCY - Live Sports Bet Bot</title>
   <style>
     :root {
       --bg-color: #08080a;
@@ -11,7 +11,8 @@
       --border-color: rgba(255, 255, 255, 0.08);
       --accent-color: #ffffff;
       --text-muted: #8a8f9d;
-      --ai-pulse: #a855f7;
+      --bot-green: #10b981;
+      --private-color: #ec4899;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -24,6 +25,14 @@
       flex-direction: column;
       height: 100vh;
       overflow: hidden;
+      transition: background-color 0.4s ease;
+    }
+
+    body.private-active {
+      --bg-color: #05020a;
+      --card-bg: #0f0a17;
+      --border-color: rgba(236, 72, 153, 0.2);
+      --accent-color: #ec4899;
     }
 
     .app-header {
@@ -54,61 +63,92 @@
       border-radius: 8px;
       cursor: pointer;
       font-size: 0.88rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .sidebar-item.active { background: rgba(255, 255, 255, 0.08); color: var(--accent-color); }
+    .sidebar-item:hover, .sidebar-item.active { background: rgba(255, 255, 255, 0.08); color: var(--accent-color); }
+    .sidebar-item.private-btn { color: var(--private-color); font-weight: 600; }
 
     .content-area { padding: 32px; overflow-y: auto; }
     .content-title { font-size: 1.3rem; margin-bottom: 24px; }
 
-    /* AI Section Banner */
-    .ai-banner {
-      background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(18, 19, 25, 0.8));
-      border: 1px solid rgba(168, 85, 247, 0.3);
+    /* Live Bot Banner */
+    .bot-banner {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(18, 19, 25, 0.9));
+      border: 1px solid rgba(16, 185, 129, 0.3);
       border-radius: 16px;
       padding: 20px;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
 
-    .ai-status-box {
+    .bot-status-box { display: flex; align-items: center; gap: 16px; }
+
+    .bot-pulse {
+      width: 16px; height: 16px; border-radius: 50%;
+      background: var(--bot-green);
+      box-shadow: 0 0 10px var(--bot-green);
+      animation: blink 1.2s infinite alternate;
+    }
+
+    @keyframes blink {
+      0% { opacity: 0.3; transform: scale(0.8); }
+      100% { opacity: 1; transform: scale(1.1); }
+    }
+
+    .bot-controls { display: flex; gap: 10px; }
+
+    .action-btn {
+      background: #10b981; color: white; border: none; padding: 10px 18px;
+      border-radius: 20px; font-weight: 600; cursor: pointer; transition: opacity 0.2s;
+    }
+
+    .action-btn:hover { opacity: 0.9; }
+
+    .toggle-btn {
+      background: rgba(255, 255, 255, 0.1); color: #fff; border: 1px solid var(--border-color);
+      padding: 10px 18px; border-radius: 20px; font-weight: 600; cursor: pointer;
+    }
+
+    /* Live Feed List */
+    .live-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .feed-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--bot-green);
+      border-radius: 10px;
+      padding: 14px 18px;
       display: flex;
       align-items: center;
-      gap: 16px;
+      justify-content: space-between;
     }
 
-    .ai-orb {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: var(--ai-pulse);
-      box-shadow: 0 0 12px var(--ai-pulse);
-      transition: all 0.3s ease;
+    .league-badge {
+      font-size: 0.72rem;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 3px 8px;
+      border-radius: 4px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      display: inline-block;
     }
 
-    .ai-orb.listening {
-      animation: pulse 1s infinite alternate;
-    }
+    .match-teams { font-weight: 600; font-size: 0.95rem; }
+    .match-time { color: var(--bot-green); font-size: 0.8rem; font-weight: bold; }
 
-    @keyframes pulse {
-      0% { transform: scale(0.9); box-shadow: 0 0 8px var(--ai-pulse); }
-      100% { transform: scale(1.3); box-shadow: 0 0 20px var(--ai-pulse); }
-    }
-
-    .mic-btn {
-      background: #a855f7;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 20px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.2s, background 0.2s;
-    }
-
-    .mic-btn:hover { transform: scale(1.05); background: #9333ea; }
+    .bet-recommendation { text-align: right; }
+    .pick-title { font-weight: 700; color: #10b981; font-size: 0.9rem; }
+    .pick-odds { font-size: 0.8rem; color: var(--text-muted); }
 
     .dashboard-grid {
       display: grid;
@@ -121,31 +161,48 @@
       border: 1px solid var(--border-color);
       border-radius: 14px;
       padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      cursor: pointer;
-      transition: all 0.2s;
+      display: flex; flex-direction: column; gap: 12px;
+      cursor: pointer; transition: all 0.2s;
     }
 
-    .card:hover, .card.playing { border-color: #ffffff; }
+    .card:hover, .card.playing { border-color: var(--accent-color); }
 
     .card-cover {
-      width: 100%;
-      aspect-ratio: 1;
-      border-radius: 10px;
-      background-size: cover;
-      background-position: center;
+      width: 100%; aspect-ratio: 1; border-radius: 10px;
+      background-size: cover; background-position: center;
+    }
+
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px);
+      display: none; align-items: center; justify-content: center;
+      z-index: 100;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .lock-box {
+      background: #13111c; border: 1px solid var(--private-color);
+      padding: 32px; border-radius: 20px; text-align: center;
+      width: 320px; display: flex; flex-direction: column; gap: 16px;
+    }
+
+    .lock-box input {
+      background: #000000; border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff; padding: 12px; border-radius: 10px; text-align: center;
+      font-size: 1.2rem; letter-spacing: 4px; outline: none;
+    }
+
+    .lock-box button {
+      background: var(--private-color); color: white; border: none;
+      padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer;
     }
 
     .app-footer {
-      height: 85px;
-      background: #111217;
+      height: 85px; background: #111217;
       border-top: 1px solid var(--border-color);
-      padding: 0 28px;
-      display: grid;
-      grid-template-columns: 250px 1fr 250px;
-      align-items: center;
+      padding: 0 28px; display: grid;
+      grid-template-columns: 250px 1fr 250px; align-items: center;
     }
 
     .track-info { display: flex; align-items: center; gap: 12px; }
@@ -154,16 +211,9 @@
     .player-center { display: flex; flex-direction: column; align-items: center; gap: 8px; }
 
     .play-btn {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: #ffffff;
-      border: none;
-      color: #000;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 44px; height: 44px; border-radius: 50%;
+      background: #ffffff; border: none; color: #000; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
     }
 
     #visualizer { width: 100%; height: 28px; }
@@ -173,33 +223,49 @@
 <body>
 
   <header class="app-header">
-    <span class="brand-title">FRQNCY AI</span>
+    <span class="brand-title" id="headerTitle">FRQNCY BOT</span>
   </header>
 
   <main class="app-main">
     <aside class="sidebar">
-      <div class="sidebar-item active">Home</div>
-      <div class="sidebar-item">AI Companion</div>
-      <div class="sidebar-item">Favorites</div>
+      <div class="sidebar-item active" id="btnHome">🏠 Dashboard</div>
+      <div class="sidebar-item" id="btnScan">⚡ Force Scan</div>
+      <div class="sidebar-item private-btn" id="btnPrivate">🔒 Private Space</div>
     </aside>
 
     <section class="content-area">
-      <!-- AI Assistant Banner -->
-      <div class="ai-banner">
-        <div class="ai-status-box">
-          <div class="ai-orb" id="aiOrb"></div>
+      <!-- Bot Control Banner -->
+      <div class="bot-banner">
+        <div class="bot-status-box">
+          <div class="bot-pulse" id="botPulse"></div>
           <div>
-            <h3 style="font-size: 1rem;" id="aiTitle">FRQNCY AI Assistant</h3>
-            <p style="font-size: 0.82rem; color: var(--text-muted);" id="aiSub">Click "Talk to AI" and tell me how you want to feel.</p>
+            <h3 style="font-size: 1rem;">Live Premier League & La Liga Bot</h3>
+            <p style="font-size: 0.82rem; color: var(--text-muted);" id="botStatus">Bot Status: ACTIVE (Scanning Live Odds...)</p>
           </div>
         </div>
-        <button class="mic-btn" id="micBtn">🎤 Talk to AI</button>
+        <div class="bot-controls">
+          <button class="action-btn" id="scanNowBtn">🔄 Scan Now</button>
+          <button class="toggle-btn" id="autoBotBtn">Auto Bot: ON</button>
+        </div>
       </div>
 
-      <h2 class="content-title">Trending Channels</h2>
+      <!-- Live Matches List -->
+      <h2 class="content-title">Live Match Bot Signals</h2>
+      <div class="live-feed" id="liveFeedContainer"></div>
+
+      <h2 class="content-title" id="gridTitle">Audio Channels</h2>
       <div class="dashboard-grid" id="channelGrid"></div>
     </section>
   </main>
+
+  <div class="modal-overlay" id="pinModal">
+    <div class="lock-box">
+      <h3 style="color: var(--private-color);">🔒 Enter Security PIN</h3>
+      <p style="font-size: 0.8rem; color: var(--text-muted);">Default PIN is <strong>1234</strong></p>
+      <input type="password" id="pinInput" maxlength="4" placeholder="••••" />
+      <button id="unlockBtn">Unlock Private Space</button>
+    </div>
+  </div>
 
   <footer class="app-footer">
     <div class="track-info">
@@ -219,55 +285,125 @@
   </footer>
 
   <script>
-    const channels = [
-      { id: 1, title: "Deep Frequencies", subtitle: "432 Hz Healing & Calm", freq: 432, cover: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&q=80" },
-      { id: 2, title: "Resonance Delta", subtitle: "528 Hz Focus & Energy", freq: 528, cover: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=80" },
-      { id: 3, title: "Synth Waveform", subtitle: "220 Hz Meditation", freq: 220, cover: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=400&q=80" },
-      { id: 4, title: "Low-Fi Ambient", subtitle: "174 Hz Deep Sleep", freq: 174, cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&q=80" }
+    // Live Match Database for Bot
+    const liveMatchDatabase = [
+      { league: "PREMIER LEAGUE", home: "Arsenal", away: "Chelsea", score: "1 - 1", time: "64'", pick: "Over 2.5 Goals", odds: "1.75", confidence: "86%" },
+      { league: "PREMIER LEAGUE", home: "Manchester City", away: "Liverpool", score: "2 - 1", time: "78'", pick: "Both Teams To Score", odds: "1.60", confidence: "91%" },
+      { league: "LA LIGA", home: "Real Madrid", away: "Sevilla", score: "0 - 0", time: "32'", pick: "Real Madrid -1.5 AH", odds: "1.88", confidence: "79%" },
+      { league: "LA LIGA", home: "Barcelona", away: "Real Betis", score: "2 - 0", time: "55'", pick: "Barcelona Win & Over 2.5", odds: "1.65", confidence: "88%" },
+      { league: "SERIE A", home: "Inter Milan", away: "Juventus", score: "1 - 0", time: "41'", pick: "Inter Milan Moneyline", odds: "1.70", confidence: "82%" },
+      { league: "PREMIER LEAGUE", home: "Newcastle", away: "Tottenham", score: "2 - 2", time: "83'", pick: "Over 4.5 Asian Total", odds: "2.10", confidence: "74%" }
+    ];
+
+    const publicChannels = [
+      { id: 1, title: "Matchday Energy", subtitle: "528 Hz Focus Mode", freq: 528, cover: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=80" },
+      { id: 2, title: "Analytics Ambient", subtitle: "432 Hz Calibration", freq: 432, cover: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&q=80" },
+      { id: 3, title: "Synth Waveform", subtitle: "220 Hz Concentration", freq: 220, cover: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=400&q=80" }
+    ];
+
+    const privateChannels = [
+      { id: 101, title: "VIP High-Odds Stream", subtitle: "639 Hz High Odds", freq: 639, cover: "https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?w=400&q=80" },
+      { id: 102, title: "Awakening Intuition", subtitle: "741 Hz Instinct Boost", freq: 741, cover: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400&q=80" }
     ];
 
     let audioCtx = null;
     let oscillator = null;
     let gainNode = null;
     let isPlaying = false;
-    let currentChannel = null;
+    let isPrivateMode = false;
+    let autoBotActive = true;
+    let botTimer = null;
 
+    const liveFeedContainer = document.getElementById('liveFeedContainer');
+    const scanNowBtn = document.getElementById('scanNowBtn');
+    const autoBotBtn = document.getElementById('autoBotBtn');
+    const botStatus = document.getElementById('botStatus');
+
+    function renderBotLivePicks() {
+      // Shuffle array to simulate live scanning changes
+      const shuffled = [...liveMatchDatabase].sort(() => 0.5 - Math.random());
+      const selected = shuffled.slice(0, 3); // Pick top 3 live signals
+
+      liveFeedContainer.innerHTML = '';
+      selected.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'feed-card';
+        card.innerHTML = `
+          <div>
+            <span class="league-badge">${item.league}</span>
+            <div class="match-teams">${item.home} ${item.score} ${item.away}</div>
+            <div class="match-time">● LIVE ${item.time}</div>
+          </div>
+          <div class="bet-recommendation">
+            <div class="pick-title">🤖 BOT PICK: ${item.pick}</div>
+            <div class="pick-odds">Odds: ${item.odds} | Confidence: ${item.confidence}</div>
+          </div>
+        `;
+        liveFeedContainer.appendChild(card);
+      });
+
+      botStatus.textContent = `Bot Status: UPDATED (${new Date().toLocaleTimeString()})`;
+    }
+
+    renderBotLivePicks();
+
+    // Auto Refresh bot signal every 8 seconds
+    botTimer = setInterval(() => {
+      if (autoBotActive) renderBotLivePicks();
+    }, 8000);
+
+    scanNowBtn.addEventListener('click', () => {
+      renderBotLivePicks();
+    });
+
+    autoBotBtn.addEventListener('click', () => {
+      autoBotActive = !autoBotActive;
+      if (autoBotActive) {
+        autoBotBtn.textContent = "Auto Bot: ON";
+        autoBotBtn.style.background = "rgba(255, 255, 255, 0.1)";
+      } else {
+        autoBotBtn.textContent = "Auto Bot: OFF";
+        autoBotBtn.style.background = "#ef4444";
+      }
+    });
+
+    /* Audio Player Logic */
+    const grid = document.getElementById('channelGrid');
     const playBtn = document.getElementById('togglePlay');
     const playIcon = `<svg width="14" height="16" viewBox="0 0 14 16" fill="currentColor"><path d="M0 0L14 8L0 16V0Z"/></svg>`;
     const pauseIcon = `<svg width="12" height="16" viewBox="0 0 12 16" fill="currentColor"><rect width="4" height="16" rx="1"/><rect x="8" width="4" height="16" rx="1"/></svg>`;
     playBtn.innerHTML = playIcon;
 
-    const grid = document.getElementById('channelGrid');
+    function renderChannels(list) {
+      grid.innerHTML = '';
+      list.forEach(ch => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.id = `card-${ch.id}`;
+        card.innerHTML = `
+          <div class="card-cover" style="background-image: url('${ch.cover}')"></div>
+          <div class="card-title">${ch.title}</div>
+          <div class="card-subtitle">${ch.subtitle}</div>
+        `;
+        card.addEventListener('click', () => startFrequency(ch));
+        grid.appendChild(card);
+      });
+    }
 
-    channels.forEach(ch => {
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.id = `card-${ch.id}`;
-      card.innerHTML = `
-        <div class="card-cover" style="background-image: url('${ch.cover}')"></div>
-        <div class="card-title">${ch.title}</div>
-        <div class="card-subtitle">${ch.subtitle}</div>
-      `;
-      card.addEventListener('click', () => startFrequency(ch));
-      grid.appendChild(card);
-    });
+    renderChannels(publicChannels);
 
     function initAudio() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
     }
 
     function startFrequency(ch) {
       initAudio();
       stopFrequency();
 
-      currentChannel = ch;
       document.querySelectorAll('.card').forEach(c => c.classList.remove('playing'));
-      document.getElementById(`card-${ch.id}`).classList.add('playing');
+      const activeCard = document.getElementById(`card-${ch.id}`);
+      if (activeCard) activeCard.classList.add('playing');
 
       document.getElementById('currentTitle').textContent = ch.title;
       document.getElementById('currentSub').textContent = ch.subtitle;
@@ -304,78 +440,33 @@
       if (isPlaying) {
         stopFrequency();
       } else {
-        startFrequency(currentChannel || channels[0]);
+        startFrequency(publicChannels[0]);
       }
     });
 
-    /* --- AI VOICE & ASSISTANT SYSTEM --- */
-    const micBtn = document.getElementById('micBtn');
-    const aiOrb = document.getElementById('aiOrb');
-    const aiSub = document.getElementById('aiSub');
+    /* Private Space Logic */
+    const pinModal = document.getElementById('pinModal');
+    const pinInput = document.getElementById('pinInput');
+    const unlockBtn = document.getElementById('unlockBtn');
+    const btnPrivate = document.getElementById('btnPrivate');
 
-    // Speech Synthesis (AI Speaking)
-    function speakAI(text) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.95;
-      utterance.pitch = 1.0;
-      window.speechSynthesis.speak(utterance);
-    }
+    btnPrivate.addEventListener('click', () => {
+      if (!isPrivateMode) pinModal.classList.add('open');
+    });
 
-    // Speech Recognition (Listening to User)
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-    if (SpeechRecognition) {
-      const recognition = new SpeechRecognition();
-      recognition.continuous = false;
-      recognition.lang = 'en-US';
-
-      micBtn.addEventListener('click', () => {
-        initAudio();
-        recognition.start();
-        aiOrb.classList.add('listening');
-        aiSub.textContent = "Listening... Tell me how you want to feel or focus.";
-      });
-
-      recognition.onresult = (event) => {
-        aiOrb.classList.remove('listening');
-        const userText = event.results[0][0].transcript.toLowerCase();
-        aiSub.textContent = `You said: "${userText}"`;
-        processAICommand(userText);
-      };
-
-      recognition.onerror = () => {
-        aiOrb.classList.remove('listening');
-        aiSub.textContent = "Couldn't hear you clearly. Try clicking the mic again!";
-      };
-    } else {
-      micBtn.style.display = 'none';
-      aiSub.textContent = "Voice recognition isn't supported in this browser.";
-    }
-
-    // Smart Intent Processing
-    function processAICommand(input) {
-      if (input.includes('relax') || input.includes('calm') || input.includes('sleep') || input.includes('stress')) {
-        const ch = channels[0]; // 432 Hz
-        startFrequency(ch);
-        speakAI("Setting frequency to 432 Hertz for deep relaxation and calm.");
-      } else if (input.includes('focus') || input.includes('work') || input.includes('study') || input.includes('energy')) {
-        const ch = channels[1]; // 528 Hz
-        startFrequency(ch);
-        speakAI("Tune set to 528 Hertz. Designed for clarity, focus, and energy.");
-      } else if (input.includes('meditate') || input.includes('mindful')) {
-        const ch = channels[2]; // 220 Hz
-        startFrequency(ch);
-        speakAI("Playing 220 Hertz tone for meditation and quiet mind.");
-      } else if (input.includes('stop') || input.includes('pause') || input.includes('mute')) {
-        stopFrequency();
-        speakAI("Frequencies paused.");
+    unlockBtn.addEventListener('click', () => {
+      if (pinInput.value === '1234') {
+        isPrivateMode = true;
+        document.body.classList.add('private-active');
+        document.getElementById('headerTitle').textContent = "FRQNCY (Private Mode)";
+        renderChannels(privateChannels);
+        pinModal.classList.remove('open');
       } else {
-        speakAI("I am your FRQNCY companion. Tell me if you want to focus, relax, meditate, or sleep.");
+        alert("Incorrect PIN. Default is 1234.");
       }
-    }
+    });
 
-    // Visualizer Canvas
+    /* Animated Visualizer */
     const canvas = document.getElementById('visualizer');
     const ctx = canvas.getContext('2d');
 
@@ -389,7 +480,7 @@
 
       for (let i = 0; i < bars; i++) {
         const height = isPlaying ? Math.random() * (canvas.height - 4) + 4 : 2;
-        ctx.fillStyle = isPlaying ? '#ffffff' : 'rgba(255, 255, 255, 0.2)';
+        ctx.fillStyle = isPlaying ? (isPrivateMode ? '#ec4899' : '#10b981') : 'rgba(255, 255, 255, 0.2)';
         ctx.fillRect(i * (barWidth + 2), canvas.height - height, barWidth, height);
       }
 
